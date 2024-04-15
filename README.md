@@ -1,42 +1,87 @@
 
 # Rapport
 
-**Skriv din rapport här!**
+Appens namn ändrades i strings.xml till "WebView av Alex"
+<string name="app_name">WebViewApp av Alex</string>
 
-_Du kan ta bort all text som finns sedan tidigare_.
+Nödvändiga import för WebView importerades i MainActivity.java
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-## Följande grundsyn gäller dugga-svar:
+private variabel av typen webView skapdes i MainActivity
+private WebView myWebView;
 
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
+La till Internetåtkomstbehörigheten i AndroidManifest.xml
+<uses-permission android:name="android.permission.INTERNET" />
 
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
+Bytte ut TextView i activity_main.xml med en WebView.
 
-```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
-    }
+<WebView
+android:id="@+id/my_webview"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent" />
+
+myWebView initierades och ändrades i OnCreate metoden i MainActivity, för att kunna annvända WebViewClient och för att kunna aktivera JavaScript
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+myWebView = findViewById(R.id.my_webview);
+myWebView.setWebViewClient(new WebViewClient());
+myWebView.getSettings().setJavaScriptEnabled(true);
 }
-```
 
-Bilder läggs i samma mapp som markdown-filen.
+En HTML-sida skapdes och las in i assets mappen. 
 
-![](android.png)
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exempelsida</title>
+</head>
+<body>
+<h1>Alex Alex</h1>
+<p>Websida websida</p>
+</body>
+</html>
 
-Läs gärna:
+ShowExternalWebPage och showInternalWebpage metoderna ändrades för att hantera externa och interna sidor.
+public void showExternalWebPage(){
+myWebView.loadUrl("https://student.his.se");
+}
 
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
+public void showInternalWebPage(){
+myWebView.loadUrl("file:///android_asset/websida.HTML");
+}
+
+OnOptionsItemSelected metoden ändrades för att visa webbsidor av användarens val.
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+int id = item.getItemId();
+
+    if (id == R.id.action_external_web) {
+        showExternalWebPage();
+        return true;
+    }
+
+    if (id == R.id.action_internal_web) {
+        showInternalWebPage();
+        return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+}
+
+
+
+
+
+![img_2.png](img_2.png)
+![img_4.png](img_4.png)
+
